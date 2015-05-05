@@ -1,6 +1,7 @@
 package fr.lo53_nkad.android.indoorpositioning;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -10,8 +11,11 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 
 public class MainActivity extends ActionBarActivity
@@ -21,8 +25,11 @@ public class MainActivity extends ActionBarActivity
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
     private NavigationDrawerFragment mNavigationDrawerFragment;
-
-    /**
+    private ImageView map;
+    private ImageView mapPin;
+    private Context mContext;
+    private Position pos ;
+    /**;
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence mTitle;
@@ -35,11 +42,30 @@ public class MainActivity extends ActionBarActivity
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
-
+        mContext = getApplicationContext();
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+        map = (ImageView) findViewById(R.id.mapView);
+        map.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                pos.setMapX((int) event.getX());
+                pos.setMapY((int) event.getY());
+
+                mapPin.setPadding(pos.getMapX(),pos.getMapY(), 0, 0);
+                mapPin.setVisibility(View.VISIBLE);
+                Toast.makeText(mContext, "(absX:" + pos.getMapX() + " , ordY: " + pos.getMapY() + ")", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
+        mapPin = (ImageView)findViewById(R.id.mapPin);
+        mapPin.setVisibility(View.INVISIBLE);
+        pos = new Position(mContext);
+        Toast.makeText(mContext,pos.getMacAdd(),Toast.LENGTH_SHORT).show();
+
     }
 
     @Override
@@ -51,7 +77,9 @@ public class MainActivity extends ActionBarActivity
                 .commit();
     }
 
+
     public void onSectionAttached(int number) {
+
         switch (number) {
             case 1:
                 mTitle = getString(R.string.title_section1);
@@ -95,6 +123,13 @@ public class MainActivity extends ActionBarActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            map.setImageResource(R.drawable.h_rdc);
+            mapPin.setVisibility(View.INVISIBLE);
+            return true;
+        }
+        else if(id == R.id.map1){
+            map.setImageResource(R.drawable.map);
+            mapPin.setVisibility(View.INVISIBLE);
             return true;
         }
 
@@ -140,6 +175,8 @@ public class MainActivity extends ActionBarActivity
             ((MainActivity) activity).onSectionAttached(
                     getArguments().getInt(ARG_SECTION_NUMBER));
         }
+
     }
+
 
 }

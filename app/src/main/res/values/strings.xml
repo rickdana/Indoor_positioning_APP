@@ -11,4 +11,6 @@
     <string name="action_example"></string>
 
     <string name="action_settings">Settings</string>
+    <string name="MapDescription" />
+    <string name="flor1">flor1</string>
 </resources>
